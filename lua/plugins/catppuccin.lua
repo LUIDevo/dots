@@ -95,7 +95,10 @@ return {
         ------------------------------------------------------------------
         -- 🚀 LOAD VARIANT
         ------------------------------------------------------------------
+        local active_variant = "eldritch_mocha" -- We track this so we can automatically reload it later
+
         local function load_variant(name)
+            active_variant = name
             local variant = custom_variants[name]
             if not variant then return end
 
@@ -104,7 +107,7 @@ return {
                 no_italic = true,
                 color_overrides = { [variant.base_flavour] = variant.colors },
 
-                integrations = { lualine = false }, -- we handle it manually
+                integrations = { lualine = false, cmp=true }, -- we handle it manually
 
                 custom_highlights = function(colors)
                     return {
@@ -116,41 +119,67 @@ return {
                         Operator = { fg = colors.teal },
                         CursorLineNr = { fg = colors.mauve, style = { "bold" } },
                         Visual = { bg = "#2e2e3e" },
-												Title = { fg = colors.mauve, style = { "bold" } },
-												-- Markdown / Neorg / Render-markdown Headers 
-												["@markup.list.checked.markdown"] = { fg = colors.green }, 
-												["@markup.list.unchecked.markdown"] = { fg = colors.overlay2 }, 
-												["@markup.heading.1.markdown"] = { fg = colors.mauve, bg = "#2d1b3d", style = { "bold" } }, 
-												RenderMarkdownH1 = { fg = colors.mauve, bg = "#2d1b3d", style = { "bold" } }, 
-												RenderMarkdownH1Bg = { bg = "#2d1b3d" },
+                        Title = { fg = colors.mauve, style = { "bold" } },
+                        -- Markdown / Neorg / Render-markdown Headers 
+                        ["@markup.list.checked.markdown"] = { fg = colors.green }, 
+                        ["@markup.list.unchecked.markdown"] = { fg = colors.overlay2 }, 
+                        ["@markup.heading.1.markdown"] = { fg = colors.mauve, bg = "#2d1b3d", style = { "bold" } }, 
+                        RenderMarkdownH1 = { fg = colors.mauve, bg = "#2d1b3d", style = { "bold" } }, 
+                        RenderMarkdownH1Bg = { bg = "#2d1b3d" },
 
-												["@markup.heading.2.markdown"] = { fg = colors.blue, bg = "#1b2b4d", style = { "bold" } }, 
-												RenderMarkdownH2 = { fg = colors.blue, bg = "#1b2b4d", style = { "bold" } }, 
-												RenderMarkdownH2Bg = { bg = "#1b2b4d" }, 
-												["@markup.heading.4.markdown"] = { fg = colors.teal, bg = "#162e2d", style = { "bold" } }, 
-												RenderMarkdownH4 = { fg = colors.teal, bg = "#162e2d", style = { "bold" } }, 
-												RenderMarkdownH4Bg = { bg = "#162e2d" }, 
-												-- H4: Green Strings 
-												["@markup.heading.3.markdown"] = { fg = colors.green, bg = "#1c2e1e", style = { "bold" } }, 
-												RenderMarkdownH3 = { fg = colors.green, bg = "#1c2e1e", style = { "bold" } }, 
-												RenderMarkdownH3Bg = { bg = "#1c2e1e" }, 
-												-- H5: Peach Numbers 
-												["@markup.heading.5.markdown"] = { fg = colors.peach, bg = "#33251e", style = { "bold" } }, 
-												RenderMarkdownH5 = { fg = colors.peach, bg = "#33251e", style = { "bold" } }, 
-												RenderMarkdownH5Bg = { bg = "#33251e" }, 
-												-- H6: Yellow Types 
-												["@markup.heading.6.markdown"] = { fg = colors.yellow, bg = "#332e1e", style = { "bold" } }, 
-												RenderMarkdownH6 = { fg = colors.yellow, bg = "#332e1e", style = { "bold" } }, 
-												RenderMarkdownH6Bg = { bg = "#332e1e" },
-											}
-										end,
-									})
+                        ["@markup.heading.2.markdown"] = { fg = colors.blue, bg = "#1b2b4d", style = { "bold" } }, 
+                        RenderMarkdownH2 = { fg = colors.blue, bg = "#1b2b4d", style = { "bold" } }, 
+                        RenderMarkdownH2Bg = { bg = "#1b2b4d" }, 
+                        ["@markup.heading.4.markdown"] = { fg = colors.teal, bg = "#162e2d", style = { "bold" } }, 
+                        RenderMarkdownH4 = { fg = colors.teal, bg = "#162e2d", style = { "bold" } }, 
+                        RenderMarkdownH4Bg = { bg = "#162e2d" }, 
+                        -- H4: Green Strings 
+                        ["@markup.heading.3.markdown"] = { fg = colors.green, bg = "#1c2e1e", style = { "bold" } }, 
+                        RenderMarkdownH3 = { fg = colors.green, bg = "#1c2e1e", style = { "bold" } }, 
+                        RenderMarkdownH3Bg = { bg = "#1c2e1e" }, 
+                        -- H5: Peach Numbers 
+                        ["@markup.heading.5.markdown"] = { fg = colors.peach, bg = "#33251e", style = { "bold" } }, 
+                        RenderMarkdownH5 = { fg = colors.peach, bg = "#33251e", style = { "bold" } }, 
+                        RenderMarkdownH5Bg = { bg = "#33251e" }, 
+                        -- H6: Yellow Types 
+                        ["@markup.heading.6.markdown"] = { fg = colors.yellow, bg = "#332e1e", style = { "bold" } }, 
+                        RenderMarkdownH6 = { fg = colors.yellow, bg = "#332e1e", style = { "bold" } }, 
+                        RenderMarkdownH6Bg = { bg = "#332e1e" },
 
-									vim.cmd.colorscheme("catppuccin")
+                        CmpItemKindSnippet = { fg = colors.base, bg = colors.mauve },
+                        CmpItemKindKeyword = { fg = colors.base, bg = colors.red or colors.mauve },
+                        CmpItemKindText = { fg = colors.base, bg = colors.teal },
+                        CmpItemKindMethod = { fg = colors.base, bg = colors.blue },
+                        CmpItemKindConstructor = { fg = colors.base, bg = colors.blue },
+                        CmpItemKindFunction = { fg = colors.base, bg = colors.blue },
+                        CmpItemKindFolder = { fg = colors.base, bg = colors.blue },
+                        CmpItemKindModule = { fg = colors.base, bg = colors.blue },
+                        CmpItemKindConstant = { fg = colors.base, bg = colors.peach },
+                        CmpItemKindField = { fg = colors.base, bg = colors.green },
+                        CmpItemKindProperty = { fg = colors.base, bg = colors.green },
+                        CmpItemKindEnum = { fg = colors.base, bg = colors.green },
+                        CmpItemKindUnit = { fg = colors.base, bg = colors.green },
+                        CmpItemKindClass = { fg = colors.base, bg = colors.yellow },
+                        CmpItemKindVariable = { fg = colors.base, bg = colors.flamingo or colors.pink },
+                        CmpItemKindFile = { fg = colors.base, bg = colors.blue },
+                        CmpItemKindInterface = { fg = colors.base, bg = colors.yellow },
+                        CmpItemKindColor = { fg = colors.base, bg = colors.red or colors.mauve },
+                        CmpItemKindReference = { fg = colors.base, bg = colors.red or colors.mauve },
+                        CmpItemKindEnumMember = { fg = colors.base, bg = colors.red or colors.mauve },
+                        CmpItemKindStruct = { fg = colors.base, bg = colors.blue },
+                        CmpItemKindValue = { fg = colors.base, bg = colors.peach },
+                        CmpItemKindEvent = { fg = colors.base, bg = colors.blue },
+                        CmpItemKindOperator = { fg = colors.base, bg = colors.blue },
+                        CmpItemKindTypeParameter = { fg = colors.base, bg = colors.blue },
+                    }
+                end,
+            })
 
-									-- Apply lualine theme tied to THIS variant only
-									local ok, lualine = pcall(require, "lualine")
-									if ok then
+            vim.cmd.colorscheme("catppuccin")
+
+            -- Apply lualine theme tied to THIS variant only
+            local ok, lualine = pcall(require, "lualine")
+            if ok then
                 lualine.setup({ options = { theme = make_lualine_theme(variant.colors) } })
             end
         end
@@ -198,8 +227,19 @@ return {
         end)
 
         ------------------------------------------------------------------
-        -- 🌙 DEFAULT
+        -- 🌙 DEFAULT & STARTUP FIX
         ------------------------------------------------------------------
+        -- 1. Load immediately so the background is set right away (prevents screen flashing)
         load_variant("eldritch_mocha")
+
+        -- 2. Force a quick reload AFTER all other plugins (like nvim-cmp) have initialized.
+        -- This ensures your custom cmp highlights and lualine themes get applied perfectly on startup.
+        vim.api.nvim_create_autocmd("VimEnter", {
+            callback = function()
+                if vim.g.colors_name == "catppuccin" then
+                    load_variant(active_variant)
+                end
+            end,
+        })
     end,
 }
